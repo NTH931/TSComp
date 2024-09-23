@@ -1,20 +1,21 @@
 import * as vscode from 'vscode';
 import { exec, ExecException } from 'child_process';
+import { Console } from 'console';
 
 let lastCompileTime: number = 0;
-let statusBarItem: vscode.StatusBarItem;
 let isCompiling: boolean = false;
+let statusBarItem: vscode.StatusBarItem;
 
 export function activate(context: vscode.ExtensionContext) {
 
   const config = vscode.workspace.getConfiguration('typescriptCompiler');
   const tsconfLocation = config.get<string>('tsconfig');
+  const compileOnSave = config.get<boolean>('compileOnSave');
 
   statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, 100);
-
   // Register a save event listener for .ts files
   context.subscriptions.push(
-    vscode.commands.registerCommand("typescriptCompiler.compile", (_) => {
+    vscode.commands.registerCommand("typescriptCompiler.compile", () => {
       const now = Date.now();
 
       if (isCompiling) {
@@ -30,6 +31,28 @@ export function activate(context: vscode.ExtensionContext) {
       }
     })
   );
+
+  // if compileOnSave is enabled
+  if (compileOnSave) {
+    context.subscriptions.push(
+      vscode.workspace.onDidSaveTextDocument((document) => {
+        if (document.languageId === 'typescript') {
+          const now = Date.now();
+
+          if (isCompiling) {
+            vscode.window.showWarningMessage('Compilation is already in progress. Please wait.');
+            return; // Block execution if compiling
+          }
+
+          if (now - lastCompileTime > 3000) {
+            compileTypeScript(tsconfLocation);
+          } else {
+            vscode.window.showWarningMessage('Please wait until the previous compilation finishes.');
+          }
+        }
+      })
+    );
+  }
 }
 
 function compileTypeScript(tsconfLocation?: string | undefined) {

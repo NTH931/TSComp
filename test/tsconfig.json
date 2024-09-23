@@ -1,0 +1,13 @@
+{
+  "buildOptions": {},
+  "compileOnSave": true,
+  "compilerOptions": {},
+  "exclude": [],
+  "extends": [],
+  "files": [],
+  "include": [],
+  "references": [],
+  "ts-node": {},
+  "typeAcquisition": {},
+  "watchOptions": {}
+}

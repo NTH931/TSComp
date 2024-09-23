@@ -1,6 +1,7 @@
 {
   "name": "tscompiler",
   "displayName": "TSCompiler",
+  "repository": {},
   "description": "A simple compiler for TypeScript.",
   "version": "0.0.1",
   "engines": {
@@ -23,6 +24,11 @@
           "type": "string",
           "default": "tsconfig.json",
           "description": "The relative path to the TypeScript configuration file."
+        },
+        "typescriptCompiler.compileOnSave": {
+          "type": "boolean",
+          "default": false,
+          "description": "Automatically compile TypeScript files on save. (Recommended for configurations without autosave)"
         }
       }
     },
